@@ -1,0 +1,12 @@
+[project]
+name = "evaluation-2"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "dash>=4.1.0",
+    "dash-bootstrap-components>=2.0.4",
+    "pandas>=3.0.1",
+    "plotly>=6.6.0",
+]
