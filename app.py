@@ -14,24 +14,26 @@ app = dash.Dash(
 server = app.server
 
 navbar = dbc.NavbarSimple(
-    brand="Avocado Dashboard",
-    color="primary",
+    brand="Application des M1 MECEN",
+    color="info",
     dark=True,
     children=[
-        dbc.NavItem(
-            dbc.NavLink(page["name"], href=page["path"])
-        )
-        for page in dash.page_registry.values()
+        dbc.NavItem(dbc.NavLink("Comparaison entre région", href="/")),
+        dbc.NavItem(dbc.NavLink("Affichage des données", href="/page2")),
+        dbc.NavItem(dbc.NavLink("Aide en ligne", href="/page3")),
     ],
 )
 
 app.layout = html.Div(
     [
-        navbar,
+        dbc.Container(
+            navbar,
+            fluid=True,
+            className="pt-3"
+        ),
         dbc.Container(
             dash.page_container,
-            fluid=True,
-            className="pt-4"
+            fluid=True
         )
     ],
     style={
