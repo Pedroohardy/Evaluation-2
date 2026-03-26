@@ -2,12 +2,14 @@ import dash
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 import pandas as pd
-import plotly.graph_objects as go
+import plotly.express as px
 
 dash.register_page(__name__, path="/", name="Page 1")
 
+
 df = pd.read_csv("datas/avocado.csv")
 df["Date"] = pd.to_datetime(df["Date"])
+
 
 regions_principales = [
     "MidSouth",
@@ -18,55 +20,29 @@ regions_principales = [
     "West"
 ]
 
+
 regions_dropdown = sorted(df["region"].dropna().unique())
 
 
-def figure_gauche_vide():
-    fig = go.Figure()
+df_left = df[df["region"].isin(regions_principales)].copy()
+df_left = (
+    df_left.groupby(["Date", "region"], as_index=False)["Total Volume"]
+    .sum()
+)
 
-    for region in regions_principales:
-        fig.add_trace(
-            go.Scatter(
-                x=[],
-                y=[],
-                mode="lines",
-                name=region
-            )
-        )
+fig_left = px.line(
+    df_left,
+    x="Date",
+    y="Total Volume",
+    color="region",
+    title="Quantités vendues - Régions principales"
+)
 
-    fig.update_layout(
-        title="Quantités vendues - Régions principales",
-        xaxis_title="Date",
-        yaxis_title="Volume total",
-        height=420,
-        margin=dict(l=20, r=20, t=50, b=20),
-        template="plotly_white"
-    )
-    return fig
-
-
-def figure_droite_vide(region="Albany"):
-    fig = go.Figure()
-
-    fig.add_trace(
-        go.Scatter(
-            x=[],
-            y=[],
-            mode="lines",
-            name=region
-        )
-    )
-
-    fig.update_layout(
-        title=f"Quantités vendues - {region}",
-        xaxis_title="Date",
-        yaxis_title="Volume total",
-        height=420,
-        margin=dict(l=20, r=20, t=50, b=20),
-        template="plotly_white"
-    )
-    return fig
-
+fig_left.update_layout(
+    xaxis_title="Date",
+    yaxis_title="Volume total",
+    height=420
+)
 
 layout = dbc.Container(
     [
@@ -78,7 +54,7 @@ layout = dbc.Container(
                         "backgroundColor": "#38a3d6",
                         "color": "white",
                         "fontWeight": "bold",
-                        "fontSize": "28px"
+                        "fontSize": "24px"
                     }
                 ),
                 dbc.CardBody(
@@ -86,25 +62,25 @@ layout = dbc.Container(
                         [
                             dbc.Col(
                                 dcc.Graph(
-                                    id="page1-graph-global",
-                                    figure=figure_gauche_vide()
+                                    id="page1-graph-left",
+                                    figure=fig_left
                                 ),
                                 width=7
                             ),
                             dbc.Col(
                                 [
                                     dbc.Badge(
-                                        "Sélectionnez une région:",
-                                        color="primary",
+                                        "Sélectionnez une région :",
                                         className="mb-3 w-100",
                                         style={
-                                            "fontSize": "16px",
+                                            "backgroundColor": "#8e2de2",
+                                            "color": "white",
                                             "padding": "10px",
-                                            "backgroundColor": "#8e2de2"
+                                            "fontSize": "16px"
                                         }
                                     ),
                                     dcc.Dropdown(
-                                        id="page1-region-dropdown",
+                                        id="page1-dropdown",
                                         options=[
                                             {"label": r, "value": r}
                                             for r in regions_dropdown
@@ -114,14 +90,12 @@ layout = dbc.Container(
                                         className="mb-3"
                                     ),
                                     dcc.Graph(
-                                        id="page1-graph-region",
-                                        figure=figure_droite_vide("Albany")
+                                        id="page1-graph-right"
                                     )
                                 ],
                                 width=5
                             )
-                        ],
-                        className="g-3"
+                        ]
                     )
                 )
             ],

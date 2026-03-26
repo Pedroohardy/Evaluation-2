@@ -1,6 +1,6 @@
 import dash
-from dash import html
 import dash_bootstrap_components as dbc
+from pages import page1_cb
 
 app = dash.Dash(
     __name__,
@@ -10,7 +10,6 @@ app = dash.Dash(
 
 server = app.server
 
-# Navbar automatique
 navbar = dbc.NavbarSimple(
     brand="Avocado Dashboard",
     children=[
@@ -21,10 +20,13 @@ navbar = dbc.NavbarSimple(
     ],
 )
 
-app.layout = dbc.Container([
-    navbar,
-    dash.page_container
-], fluid=True)
+app.layout = dbc.Container(
+    [
+        navbar,
+        dash.page_container
+    ],
+    fluid=True
+)
 
 if __name__ == "__main__":
     app.run(debug=True)
